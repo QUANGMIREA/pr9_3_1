@@ -1,6 +1,9 @@
 package com.example.pr9_3_1;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
@@ -10,22 +13,24 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Проверяем наличие внешнего хранилища
-        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
-            Toast.makeText(this, "External Storage not available or read only", Toast.LENGTH_LONG).show();
-            return;
-        }
+        verifyStoragePermissions();
 
-        // Создание и запись файла
+        // Tạo và ghi tệp
         createAndWriteFile();
 
-        // Удаление файла
-        deleteFile();
+        // Xóa tệp
+        //deleteFile();
     }
 
     private void createAndWriteFile() {
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } catch (IOException e) {
+            Toast.makeText(this, "Failed to create file", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
@@ -64,13 +70,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isExternalStorageReadOnly() {
-        String extStorageState = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState);
-    }
+    public void verifyStoragePermissions() {
+        int permission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-    public boolean isExternalStorageAvailable() {
-        String extStorageState = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(extStorageState);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 }
