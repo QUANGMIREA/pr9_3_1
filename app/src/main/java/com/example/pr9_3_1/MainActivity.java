@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             storageDir.mkdirs();
         }
 
-        File file = new File(storageDir, "example.txt");
+        File file = new File(storageDir, "example1233.txt");
         try {
             if (!file.exists()) {
                 boolean created = file.createNewFile();
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteFile() {
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        File file = new File(storageDir, "example.txt");
+        File file = new File(storageDir, "example1233.txt");
         if (file.exists()) {
             boolean deleted = file.delete();
             if (deleted) {
